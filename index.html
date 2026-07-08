@@ -219,6 +219,9 @@ form{display:flex;flex-direction:column;gap:16px}
   transition:border-color .2s;
 }
 .field input:focus,.field select:focus,.field textarea:focus{border-color:var(--accent)}
+.field input.invalid{border-color:rgba(255,120,120,.65)}
+.field-hint{display:none;font-size:12.5px;color:#ffb3b3;margin-top:6px}
+.field input.invalid~.field-hint{display:block}
 .field textarea{resize:vertical;min-height:110px}
 .form-note{font-size:13px;color:var(--muted)}
 .form-ok{
@@ -421,11 +424,11 @@ footer{border-top:1px solid var(--line);padding:34px 0;background:var(--bg)}
   <div class="container">
     <span class="tag">Обратная связь</span>
     <h2>Записаться или задать вопрос</h2>
-    <p class="sub">Оставьте заявку — ответим в WhatsApp или перезвоним. Либо напишите нам напрямую в мессенджеры.</p>
+    <p class="sub">Оставьте заявку — перезвоним в ближайшее время. Либо напишите нам напрямую в Telegram или ВКонтакте.</p>
     <div class="contact-wrap">
       <form id="feedbackForm">
         <div class="field"><label for="f-name">Ваше имя</label><input id="f-name" type="text" required placeholder="Иван"></div>
-        <div class="field"><label for="f-phone">Телефон</label><input id="f-phone" type="tel" required placeholder="+7 (___) ___-__-__"></div>
+        <div class="field"><label for="f-phone">Телефон</label><input id="f-phone" type="tel" required placeholder="+7 (___) ___-__-__" autocomplete="tel" inputmode="tel"><div class="field-hint" id="phoneHint">Введите номер полностью: +7 (XXX) XXX-XX-XX</div></div>
         <div class="field"><label for="f-service">Услуга</label>
           <select id="f-service">
             <option>Комплексная мойка</option>
@@ -440,9 +443,8 @@ footer{border-top:1px solid var(--line);padding:34px 0;background:var(--bg)}
         <div class="field"><label for="f-msg">Комментарий</label><textarea id="f-msg" placeholder="Марка авто, что нужно сделать, удобное время…"></textarea></div>
         <input type="text" id="f-hp" style="display:none" tabindex="-1" autocomplete="off">
         <button class="btn btn-primary" type="submit" id="submitBtn">Отправить заявку</button>
-        <a class="btn btn-ghost" href="https://wa.me/79066606665" target="_blank" rel="noopener" style="justify-content:center">Или написать в WhatsApp</a>
         <div class="form-ok" id="formOk">Спасибо! Заявка отправлена — свяжемся с вами в ближайшее время.</div>
-        <div class="form-ok" id="formErr" style="border-color:rgba(255,120,120,.35);background:rgba(255,120,120,.08);color:#ffb3b3">Не получилось отправить. Позвоните нам: +7 906 660-66-65 или напишите в WhatsApp.</div>
+        <div class="form-ok" id="formErr" style="border-color:rgba(255,120,120,.35);background:rgba(255,120,120,.08);color:#ffb3b3">Не получилось отправить. Позвоните нам: +7 906 660-66-65 или напишите в Telegram.</div>
         <div class="form-note">Нажимая кнопку, вы соглашаетесь на обработку персональных данных.</div>
       </form>
       <div class="contact-info">
@@ -451,7 +453,6 @@ footer{border-top:1px solid var(--line);padding:34px 0;background:var(--bg)}
         <div class="c-item"><div class="ico">📞</div><div><b>Телефон</b><a class="val" href="tel:+79066606665">+7 906 660-66-65</a></div></div>
         <div class="c-item"><div class="ico">🚗</div><div><b>Удобства</b><span>Зона ожидания с Wi-Fi, детский уголок, парковка, оплата картой и по QR</span></div></div>
         <div class="socials">
-          <a href="https://wa.me/79066606665" target="_blank" rel="noopener">WhatsApp</a>
           <a href="https://t.me/detailing57_OREL" target="_blank" rel="noopener">Telegram</a>
           <a href="https://vk.com/club223137201" target="_blank" rel="noopener">ВКонтакте</a>
         </div>
@@ -550,10 +551,40 @@ window.addEventListener('scroll', () => {
   if (y < window.innerHeight) hero.style.setProperty('--py', y * .25 + 'px');
 }, { passive: true });
 
+// phone mask +7 (XXX) XXX-XX-XX
+const phoneInput = document.getElementById('f-phone');
+const phoneDigits = v => {
+  let d = v.replace(/\D/g, '');
+  if (d.startsWith('8')) d = '7' + d.slice(1);
+  if (!d.startsWith('7')) d = '7' + d;
+  return d.slice(0, 11);
+};
+const formatPhone = d => {
+  let out = '+7';
+  if (d.length > 1) out += ' (' + d.slice(1, 4);
+  if (d.length >= 4) out += ') ' + d.slice(4, 7);
+  if (d.length >= 7) out += '-' + d.slice(7, 9);
+  if (d.length >= 9) out += '-' + d.slice(9, 11);
+  return out;
+};
+phoneInput.addEventListener('input', () => {
+  const v = phoneInput.value;
+  phoneInput.value = v.trim() ? formatPhone(phoneDigits(v)) : '';
+  phoneInput.classList.remove('invalid');
+});
+phoneInput.addEventListener('blur', () => {
+  if (phoneInput.value && phoneDigits(phoneInput.value).length < 11) phoneInput.classList.add('invalid');
+});
+
 // feedback form -> real email via FormSubmit
 document.getElementById('feedbackForm').addEventListener('submit', async e => {
   e.preventDefault();
   if (document.getElementById('f-hp').value) return; // honeypot
+  if (phoneDigits(phoneInput.value).length < 11) {
+    phoneInput.classList.add('invalid');
+    phoneInput.focus();
+    return;
+  }
   const btn = document.getElementById('submitBtn');
   const ok = document.getElementById('formOk');
   const err = document.getElementById('formErr');
