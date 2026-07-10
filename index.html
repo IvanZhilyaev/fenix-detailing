@@ -539,6 +539,7 @@ footer{border-top:1px solid var(--line);padding:34px 0;background:var(--bg)}
 
 <div class="lightbox" id="lightbox"><img src="" alt=""></div>
 
+<script src="booking-config.js"></script>
 <script>
 // reveal on scroll
 const io = new IntersectionObserver(es => es.forEach(e => {
@@ -751,7 +752,7 @@ function bkUpdateSummary() {
 
 async function bkInit() {
   try {
-    const res = await fetch(`${BOOKING_API}/api/state`);
+    const res = await fetch(`${BOOKING_API}/api/services`);
     const data = await res.json();
     bk.services = data.services;
     bk.settings = data.settings;
