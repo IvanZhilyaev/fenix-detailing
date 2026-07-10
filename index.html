@@ -246,12 +246,8 @@ form{display:flex;flex-direction:column;gap:16px}
 .map{margin-top:56px;border-radius:var(--radius);overflow:hidden;border:1px solid var(--line);height:380px}
 .map iframe{width:100%;height:100%;border:0;filter:grayscale(.25) invert(.92) hue-rotate(185deg) saturate(.8) brightness(.9)}
 
-/* booking */
-#booking{background:var(--bg)}
-.bk{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:34px;display:flex;flex-direction:column;gap:28px}
-@media(max-width:600px){.bk{padding:22px 16px}}
-.bk-label{font-size:13px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);margin-bottom:12px}
-.bk-label .bk-meta{color:var(--muted);text-transform:none;letter-spacing:0;font-weight:600;margin-left:10px}
+/* booking widget in form */
+.bk-meta{color:var(--muted);font-weight:600;margin-left:8px;text-transform:none}
 .bk-dates{display:flex;gap:10px;overflow-x:auto;padding-bottom:6px;scrollbar-width:thin}
 .bk-date{
   flex:none;min-width:74px;padding:10px 14px;border-radius:12px;text-align:center;cursor:pointer;
@@ -262,12 +258,7 @@ form{display:flex;flex-direction:column;gap:16px}
 .bk-date:hover{border-color:rgba(125,170,255,.45)}
 .bk-date.sel{background:var(--accent);border-color:var(--accent)}
 .bk-date.sel b,.bk-date.sel span{color:#04101f}
-.bk-select{
-  width:100%;max-width:520px;background:var(--bg-3);border:1px solid var(--line);border-radius:12px;
-  color:var(--txt);padding:14px 16px;font-size:15px;font-family:inherit;outline:none;
-}
-.bk-select:focus{border-color:var(--accent)}
-.bk-slots{display:grid;grid-template-columns:repeat(auto-fill,minmax(86px,1fr));gap:9px}
+.bk-slots{display:grid;grid-template-columns:repeat(auto-fill,minmax(70px,1fr));gap:8px}
 .bk-slot{
   position:relative;padding:11px 4px;border-radius:10px;text-align:center;cursor:pointer;
   background:var(--bg-3);border:1px solid var(--line);color:var(--txt);
@@ -293,8 +284,6 @@ form{display:flex;flex-direction:column;gap:16px}
 .bk-box:hover:not(:disabled){border-color:var(--accent)}
 .bk-box:disabled{opacity:.28;cursor:not-allowed;text-decoration:line-through}
 .bk-box.sel{background:var(--accent);border-color:var(--accent);color:#04101f}
-.bk-fields{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;max-width:900px}
-@media(max-width:760px){.bk-fields{grid-template-columns:1fr}}
 .bk-summary{
   background:rgba(77,163,255,.08);border:1px solid rgba(77,163,255,.25);border-radius:12px;
   padding:14px 18px;font-size:15px;
@@ -362,8 +351,7 @@ footer{border-top:1px solid var(--line);padding:34px 0;background:var(--bg)}
       <a href="#services">Услуги</a>
       <a href="#gallery">Работы</a>
       <a href="#reviews">Отзывы</a>
-      <a href="#booking">Запись</a>
-      <a href="#contact">Контакты</a>
+      <a href="#contact">Запись</a>
     </nav>
     <a class="nav-cta" href="tel:+79066606665">+7 906 660-66-65</a>
   </div>
@@ -376,7 +364,7 @@ footer{border-top:1px solid var(--line);padding:34px 0;background:var(--bg)}
     <h1>Детейлинг, после которого машина выглядит <em>как новая</em></h1>
     <p>Детейлинг центр «Феникс» в Орле — химчистка, полировка, оклейка и шумоизоляция с оценкой 5.0 на Яндекс Картах.</p>
     <div class="hero-actions">
-      <a class="btn btn-primary" href="#booking">Записаться</a>
+      <a class="btn btn-primary" href="#contact">Записаться</a>
       <a class="btn btn-ghost" href="#services">Смотреть услуги</a>
     </div>
     <div class="stats reveal">
@@ -481,59 +469,14 @@ footer{border-top:1px solid var(--line);padding:34px 0;background:var(--bg)}
   </div>
 </section>
 
-<section id="booking">
-  <div class="container">
-    <span class="tag">Онлайн-запись</span>
-    <h2>Выберите удобное время</h2>
-    <p class="sub">Живое расписание наших боксов: видно, какое время свободно и какой бокс доступен. Запись сразу попадает в график мастеров.</p>
-    <div class="bk reveal">
-      <div class="bk-offline" id="bkOffline" hidden>⚠️ Онлайн-запись временно недоступна. Позвоните <a href="tel:+79066606665" style="color:var(--gold);font-weight:700">+7 906 660-66-65</a> или оставьте заявку в форме ниже — мы подберём время.</div>
-      <div class="bk-step">
-        <div class="bk-label">Дата</div>
-        <div class="bk-dates" id="bkDates"></div>
-      </div>
-      <div class="bk-step">
-        <div class="bk-label">Услуга</div>
-        <select class="bk-select" id="bkService"></select>
-      </div>
-      <div class="bk-step">
-        <div class="bk-label">Время <span class="bk-meta" id="bkMeta"></span></div>
-        <div class="bk-slots" id="bkSlots"></div>
-        <div class="bk-legend">
-          <span class="l-free"><i></i>свободно — оба бокса</span>
-          <span class="l-one"><i></i>свободен один бокс</span>
-          <span class="l-busy"><i></i>занято</span>
-        </div>
-      </div>
-      <div class="bk-step" id="bkBoxStep" hidden>
-        <div class="bk-label">Бокс</div>
-        <div class="bk-boxes" id="bkBoxes"></div>
-      </div>
-      <div class="bk-step" id="bkContactStep" hidden>
-        <div class="bk-label">Ваши данные</div>
-        <div class="bk-summary" id="bkSummary" style="margin-bottom:14px"></div>
-        <div class="bk-fields">
-          <div class="field"><label for="b-name">Имя</label><input id="b-name" type="text" required placeholder="Иван"></div>
-          <div class="field"><label for="b-phone">Телефон</label><input id="b-phone" type="tel" required placeholder="+7 (___) ___-__-__" inputmode="tel"><div class="field-hint">Введите номер полностью</div></div>
-          <div class="field"><label for="b-car">Автомобиль</label><input id="b-car" type="text" placeholder="Kia Rio, чёрный"></div>
-        </div>
-        <button class="btn btn-primary" id="bkSubmit" style="margin-top:18px">Записаться</button>
-      </div>
-      <div class="form-ok" id="bkOk"></div>
-      <div class="form-ok" id="bkErr" style="border-color:rgba(255,120,120,.35);background:rgba(255,120,120,.08);color:#ffb3b3"></div>
-    </div>
-  </div>
-</section>
-
 <section id="contact">
   <div class="container">
-    <span class="tag">Обратная связь</span>
-    <h2>Записаться или задать вопрос</h2>
-    <p class="sub">Оставьте заявку — перезвоним в ближайшее время. Либо напишите нам напрямую в Telegram или ВКонтакте.</p>
+    <span class="tag">Запись</span>
+    <h2>Записаться на удобное время</h2>
+    <p class="sub">Выберите услугу, свободный день, время и бокс — заявка сразу попадёт в расписание наших мастеров.</p>
     <div class="contact-wrap">
       <form id="feedbackForm">
-        <div class="field"><label for="f-name">Ваше имя</label><input id="f-name" type="text" required placeholder="Иван"></div>
-        <div class="field"><label for="f-phone">Телефон</label><input id="f-phone" type="tel" required placeholder="+7 (___) ___-__-__" autocomplete="tel" inputmode="tel"><div class="field-hint" id="phoneHint">Введите номер полностью: +7 (XXX) XXX-XX-XX</div></div>
+        <div class="bk-offline" id="bkOffline" hidden>⚠️ Онлайн-расписание сейчас недоступно — оставьте заявку, мы перезвоним и подберём удобное время.</div>
         <div class="field"><label for="f-service">Услуга</label>
           <select id="f-service">
             <option>Комплексная мойка</option>
@@ -545,9 +488,26 @@ footer{border-top:1px solid var(--line);padding:34px 0;background:var(--bg)}
             <option>Другое</option>
           </select>
         </div>
-        <div class="field"><label for="f-msg">Комментарий</label><textarea id="f-msg" placeholder="Марка авто, что нужно сделать, удобное время…"></textarea></div>
+        <div class="field" id="stepDate" hidden><label>Свободный день</label>
+          <div class="bk-dates" id="bkDates"></div>
+        </div>
+        <div class="field" id="stepTime" hidden><label>Свободное время <span class="bk-meta" id="bkMeta"></span></label>
+          <div class="bk-slots" id="bkSlots"></div>
+          <div class="bk-legend">
+            <span class="l-free"><i></i>оба бокса свободны</span>
+            <span class="l-one"><i></i>свободен один бокс</span>
+            <span class="l-busy"><i></i>занято</span>
+          </div>
+        </div>
+        <div class="field" id="stepBox" hidden><label>Бокс</label>
+          <div class="bk-boxes" id="bkBoxes"></div>
+        </div>
+        <div class="bk-summary" id="bkSummary" hidden></div>
+        <div class="field"><label for="f-name">Ваше имя</label><input id="f-name" type="text" required placeholder="Иван"></div>
+        <div class="field"><label for="f-phone">Телефон</label><input id="f-phone" type="tel" required placeholder="+7 (___) ___-__-__" autocomplete="tel" inputmode="tel"><div class="field-hint" id="phoneHint">Введите номер полностью: +7 (XXX) XXX-XX-XX</div></div>
+        <div class="field"><label for="f-msg">Автомобиль и комментарий</label><textarea id="f-msg" placeholder="Kia Rio чёрный, сильные пятна на сиденьях…"></textarea></div>
         <input type="text" id="f-hp" style="display:none" tabindex="-1" autocomplete="off">
-        <button class="btn btn-primary" type="submit" id="submitBtn">Отправить заявку</button>
+        <button class="btn btn-primary" type="submit" id="submitBtn">Записаться</button>
         <div class="form-ok" id="formOk">Спасибо! Заявка отправлена — свяжемся с вами в ближайшее время.</div>
         <div class="form-ok" id="formErr" style="border-color:rgba(255,120,120,.35);background:rgba(255,120,120,.08);color:#ffb3b3">Не получилось отправить. Позвоните нам: +7 906 660-66-65 или напишите в Telegram.</div>
         <div class="form-note">Нажимая кнопку, вы соглашаетесь на обработку персональных данных.</div>
@@ -681,13 +641,13 @@ phoneInput.addEventListener('blur', () => {
   if (phoneInput.value && phoneDigits(phoneInput.value).length < 11) phoneInput.classList.add('invalid');
 });
 
-// ===== online booking =====
+// ===== запись: свободные дни, время и боксы из приложения записей =====
 // Адрес сервера записи. Для доступа из интернета укажите публичный URL сервера.
 const BOOKING_API = window.BOOKING_API_URL || 'http://localhost:3000';
 
 const bk = {
-  date: null, serviceId: null, slot: null, post: 0, // 0 = любой бокс
-  slots: [], settings: null, services: []
+  online: false, date: null, slot: null, post: 0, // 0 = любой бокс
+  settings: null, services: []
 };
 const $ = id => document.getElementById(id);
 const MONTHS = ['января','февраля','марта','апреля','мая','июня','июля','августа','сентября','октября','ноября','декабря'];
@@ -695,23 +655,10 @@ const DAYS = ['Вс','Пн','Вт','Ср','Чт','Пт','Сб'];
 const dstr = d => `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
 const humanDur = m => m < 60 ? `${m} мин` : (m % 60 ? `${Math.floor(m/60)} ч ${m%60} мин` : `${m/60} ч`);
 
-function bkResetSelection() {
+function bkClearSelection() {
   bk.slot = null; bk.post = 0;
-  $('bkBoxStep').hidden = true;
-  $('bkContactStep').hidden = true;
-  $('bkOk').style.display = 'none';
-  $('bkErr').style.display = 'none';
-}
-
-async function bkLoadServices() {
-  const res = await fetch(`${BOOKING_API}/api/state`);
-  const data = await res.json();
-  bk.services = data.services;
-  bk.settings = data.settings;
-  $('bkService').innerHTML = data.services
-    .map(s => `<option value="${s.id}">${s.name} — ${humanDur(s.duration)}, ${s.price.toLocaleString('ru-RU')} ₽</option>`)
-    .join('');
-  bk.serviceId = data.services[0]?.id;
+  $('stepBox').hidden = true;
+  $('bkSummary').hidden = true;
 }
 
 function bkRenderDates() {
@@ -729,7 +676,7 @@ function bkRenderDates() {
       wrap.querySelectorAll('.sel').forEach(x => x.classList.remove('sel'));
       btn.classList.add('sel');
       bk.date = btn.dataset.date;
-      bkResetSelection();
+      bkClearSelection();
       bkLoadSlots();
     });
     wrap.appendChild(btn);
@@ -740,15 +687,13 @@ function bkRenderDates() {
 async function bkLoadSlots() {
   const box = $('bkSlots');
   box.innerHTML = '<div class="bk-empty">Загружаем расписание…</div>';
-  const res = await fetch(`${BOOKING_API}/api/availability?date=${bk.date}&serviceId=${bk.serviceId}`);
+  const res = await fetch(`${BOOKING_API}/api/availability?date=${bk.date}&serviceId=${$('f-service').value}`);
   const data = await res.json();
-  bk.slots = data.slots;
-  const svc = data.service;
-  $('bkMeta').textContent = `${svc.name.toLowerCase()} занимает ${humanDur(svc.duration)}`;
+  $('bkMeta').textContent = `· ${data.service.name.toLowerCase()} занимает ${humanDur(data.service.duration)}`;
   box.innerHTML = '';
   const anyFree = data.slots.some(s => s.posts.length && !s.past);
   if (!anyFree) {
-    box.innerHTML = '<div class="bk-empty">На этот день свободного времени под выбранную услугу нет — попробуйте другую дату.</div>';
+    box.innerHTML = '<div class="bk-empty">На этот день свободного времени под выбранную услугу нет — выберите другую дату.</div>';
     return;
   }
   data.slots.forEach(s => {
@@ -769,7 +714,6 @@ function bkPickSlot(slot, btn) {
   $('bkSlots').querySelectorAll('.sel').forEach(x => x.classList.remove('sel'));
   btn.classList.add('sel');
   bk.slot = slot; bk.post = 0;
-  // выбор бокса
   const boxes = $('bkBoxes');
   boxes.innerHTML = '';
   const anyBtn = document.createElement('button');
@@ -783,10 +727,9 @@ function bkPickSlot(slot, btn) {
     if (!b.disabled) b.addEventListener('click', () => bkPickBox(p, b));
     boxes.appendChild(b);
   }
-  $('bkBoxStep').hidden = false;
-  $('bkContactStep').hidden = false;
+  $('stepBox').hidden = false;
+  $('bkSummary').hidden = false;
   bkUpdateSummary();
-  $('bkBoxStep').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
 }
 
 function bkPickBox(p, btn) {
@@ -797,94 +740,92 @@ function bkPickBox(p, btn) {
 }
 
 function bkUpdateSummary() {
-  const svc = bk.services.find(s => s.id === bk.serviceId);
+  const svc = bk.services.find(s => s.id === $('f-service').value);
   const [y, m, d] = bk.date.split('-').map(Number);
-  const end = (() => {
-    const [hh, mm] = bk.slot.start.split(':').map(Number);
-    const t = hh * 60 + mm + svc.duration;
-    return `${String(Math.floor(t/60)).padStart(2,'0')}:${String(t%60).padStart(2,'0')}`;
-  })();
+  const [hh, mm] = bk.slot.start.split(':').map(Number);
+  const t = hh * 60 + mm + svc.duration;
+  const end = `${String(Math.floor(t/60)).padStart(2,'0')}:${String(t%60).padStart(2,'0')}`;
   $('bkSummary').innerHTML =
     `<b>${svc.name}</b> · ${d} ${MONTHS[m-1]}, <b>${bk.slot.start}–${end}</b> · ${bk.post ? `Бокс ${bk.post}` : 'любой свободный бокс'} · ${svc.price.toLocaleString('ru-RU')} ₽`;
 }
 
-async function bkSubmit() {
-  const name = $('b-name').value.trim();
-  const phoneEl = $('b-phone');
-  $('bkErr').style.display = 'none';
-  if (!name) { $('b-name').focus(); return; }
-  if (phoneDigits(phoneEl.value).length < 11) {
-    phoneEl.classList.add('invalid'); phoneEl.focus(); return;
-  }
-  const btn = $('bkSubmit');
-  btn.disabled = true; btn.textContent = 'Записываем…';
-  try {
-    const res = await fetch(`${BOOKING_API}/api/bookings`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        date: bk.date, serviceId: bk.serviceId,
-        start: bk.slot.start, post: bk.post || undefined,
-        client: name, phone: phoneEl.value, car: $('b-car').value.trim()
-      })
-    });
-    const data = await res.json();
-    if (!res.ok) throw new Error(data.error || 'Не удалось записаться');
-    const [y, m, d] = data.date.split('-').map(Number);
-    $('bkOk').innerHTML = `✅ Вы записаны: <b>${d} ${MONTHS[m-1]} в ${data.start}</b>, Бокс ${data.post}. Ждём вас по адресу ул. Весёлая, 2Б!`;
-    $('bkOk').style.display = 'block';
-    $('bkContactStep').hidden = true;
-    $('bkBoxStep').hidden = true;
-    bkLoadSlots();
-  } catch (err) {
-    $('bkErr').textContent = '⚠️ ' + (err.message || 'Ошибка. Попробуйте другое время или позвоните нам.');
-    $('bkErr').style.display = 'block';
-    bkLoadSlots();
-  } finally {
-    btn.disabled = false; btn.textContent = 'Записаться';
-  }
-}
-
 async function bkInit() {
   try {
-    await bkLoadServices();
+    const res = await fetch(`${BOOKING_API}/api/state`);
+    const data = await res.json();
+    bk.services = data.services;
+    bk.settings = data.settings;
+    bk.online = true;
+    $('f-service').innerHTML = data.services
+      .map(s => `<option value="${s.id}">${s.name} — ${humanDur(s.duration)}, ${s.price.toLocaleString('ru-RU')} ₽</option>`)
+      .join('');
+    $('stepDate').hidden = false;
+    $('stepTime').hidden = false;
     bkRenderDates();
     await bkLoadSlots();
-    $('bkService').addEventListener('change', () => {
-      bk.serviceId = $('bkService').value;
-      bkResetSelection();
-      bkLoadSlots();
-    });
-    $('bkSubmit').addEventListener('click', bkSubmit);
-    // маска телефона в записи
-    const bp = $('b-phone');
-    bp.addEventListener('input', () => {
-      bp.value = bp.value.trim() ? formatPhone(phoneDigits(bp.value)) : '';
-      bp.classList.remove('invalid');
-    });
+    $('f-service').addEventListener('change', () => { bkClearSelection(); bkLoadSlots(); });
   } catch {
+    bk.online = false;
     $('bkOffline').hidden = false;
-    document.querySelectorAll('#booking .bk-step').forEach(el => el.hidden = true);
+    $('submitBtn').textContent = 'Отправить заявку';
   }
 }
 bkInit();
 
-// feedback form -> real email via FormSubmit
+// отправка: онлайн-запись в приложение, при недоступности — письмо на почту
 document.getElementById('feedbackForm').addEventListener('submit', async e => {
   e.preventDefault();
   if (document.getElementById('f-hp').value) return; // honeypot
+  const ok = document.getElementById('formOk');
+  const err = document.getElementById('formErr');
+  ok.style.display = err.style.display = 'none';
   if (phoneDigits(phoneInput.value).length < 11) {
     phoneInput.classList.add('invalid');
     phoneInput.focus();
     return;
   }
   const btn = document.getElementById('submitBtn');
-  const ok = document.getElementById('formOk');
-  const err = document.getElementById('formErr');
-  ok.style.display = err.style.display = 'none';
-  btn.disabled = true;
   const btnText = btn.textContent;
-  btn.textContent = 'Отправляем…';
+  const name = document.getElementById('f-name').value.trim();
+  const msg = document.getElementById('f-msg').value.trim();
+
+  if (bk.online) {
+    if (!bk.slot) {
+      err.textContent = '⚠️ Выберите свободные день и время выше.';
+      err.style.display = 'block';
+      $('stepTime').scrollIntoView({ behavior: 'smooth', block: 'center' });
+      return;
+    }
+    btn.disabled = true; btn.textContent = 'Записываем…';
+    try {
+      const res = await fetch(`${BOOKING_API}/api/bookings`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          date: bk.date, serviceId: $('f-service').value,
+          start: bk.slot.start, post: bk.post || undefined,
+          client: name, phone: phoneInput.value, car: msg
+        })
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Не удалось записаться');
+      const [y, m, d] = data.date.split('-').map(Number);
+      ok.innerHTML = `✅ Вы записаны: <b>${d} ${MONTHS[m-1]} в ${data.start}</b>, Бокс ${data.post}. Ждём вас по адресу ул. Весёлая, 2Б!`;
+      ok.style.display = 'block';
+      bkClearSelection();
+      bkLoadSlots();
+    } catch (ex) {
+      err.textContent = '⚠️ ' + (ex.message || 'Ошибка. Попробуйте другое время или позвоните нам.');
+      err.style.display = 'block';
+      bkLoadSlots();
+    } finally {
+      btn.disabled = false; btn.textContent = btnText;
+    }
+    return;
+  }
+
+  // резервный вариант: письмо на почту
+  btn.disabled = true; btn.textContent = 'Отправляем…';
   try {
     const res = await fetch('https://formsubmit.co/ajax/ivanzhilyaev7@gmail.com', {
       method: 'POST',
@@ -893,23 +834,26 @@ document.getElementById('feedbackForm').addEventListener('submit', async e => {
         _subject: 'Новая заявка с сайта — детейлинг центр Феникс',
         _template: 'table',
         _captcha: 'false',
-        'Имя': document.getElementById('f-name').value.trim(),
-        'Телефон': document.getElementById('f-phone').value.trim(),
-        'Услуга': document.getElementById('f-service').value,
-        'Комментарий': document.getElementById('f-msg').value.trim() || '—'
+        'Имя': name,
+        'Телефон': phoneInput.value,
+        'Услуга': document.getElementById('f-service').selectedOptions[0].textContent,
+        'Комментарий': msg || '—'
       })
     });
     const data = await res.json();
     if (!res.ok || String(data.success) !== 'true') throw new Error('send failed');
+    ok.textContent = 'Спасибо! Заявка отправлена — свяжемся с вами в ближайшее время.';
     ok.style.display = 'block';
     e.target.reset();
   } catch {
+    err.textContent = 'Не получилось отправить. Позвоните нам: +7 906 660-66-65 или напишите в Telegram.';
     err.style.display = 'block';
   } finally {
     btn.disabled = false;
     btn.textContent = btnText;
   }
 });
+
 </script>
 </body>
 </html>
