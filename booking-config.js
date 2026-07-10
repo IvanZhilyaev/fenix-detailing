@@ -1,3 +1,3 @@
 // Адрес сервера онлайн-записи. Обновляется автоматически скриптом туннеля
 // (detailing-booking/tunnel.js) при запуске онлайн-записи в студии.
-window.BOOKING_API_URL = 'https://constitute-llc-hills-ron.trycloudflare.com';
+window.BOOKING_API_URL = 'http://localhost:3000';
